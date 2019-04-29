@@ -6,10 +6,10 @@ export default class Search {
         this.query = query;
     }
 
-    async getRecipe() {
+    async getRecipes() {
         try {
-            const res = await axios(`${proxy}https://www.food2fork.com/api/search?key=${key}&q=${this.query}`);      
-            this.result = res.data.recipes;
+            const result = await axios(`${proxy}https://www.food2fork.com/api/search?key=${key}&q=${this.query}`);      
+            this.recipes = result.data.recipes;
         } catch (error) {
             alert(error);
         }
