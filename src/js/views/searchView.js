@@ -81,18 +81,3 @@ export const highlightResult = (recipe) => {
     recipe.classList.add('results__link--active');
 };
 
-export const renderLoader = () => {
-    const loader = `
-        <div class="loader">
-            <svg>
-                <use href="img/icons.svg#icon-cw"></use>
-            </svg>
-        </div>
-    `;
-    elements.resultsList.insertAdjacentHTML('afterbegin', loader);
-};
-
-export const clearLoader = () => {
-    document.querySelector('.loader').parentNode.removeChild(document.querySelector('.loader'));
-};
-
