@@ -5,6 +5,7 @@ export default class Recipe {
     
     constructor(id) {
         this.id = id;
+        this.isLiked = false;
     }
 
     async getDetails() {
@@ -104,4 +105,8 @@ export default class Recipe {
 
         this.servings = newServings;
     };
+
+    liked() {
+        this.isLiked ? this.isLiked = false : this.isLiked = true;
+    }
 }
