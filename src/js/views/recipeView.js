@@ -54,7 +54,7 @@ export const renderRecipe = (recipe) => {
             </div>
             <button class="recipe__love">
                 <svg class="header__likes">
-                    <use href="img/icons.svg#icon-heart-outlined"></use>
+                    <use href="img/icons.svg#icon-heart${recipe.isLiked ? '' : '-outlined'}"></use>
                 </svg>
             </button>
         </div>
@@ -92,3 +92,4 @@ export const renderRecipe = (recipe) => {
 };
 
 export const clearRecipe = () => elements.recipe.innerHTML = '';
+
