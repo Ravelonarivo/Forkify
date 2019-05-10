@@ -9,6 +9,8 @@ import * as recipeView from './views/recipeView';
 
 const state = {};
 
+window.state = state;
+
 /**
  * Search controller
  */
@@ -108,6 +110,16 @@ elements.resultsList.addEventListener('click', e => {
     
         controlRecipe(recipeID);
     } 
+});
+
+elements.recipe.addEventListener('click', e => {
+    if (e.target.closest('.btn-decrease')) {
+        state.recipe.servings > 1 ? state.recipe.updateServings('dec') : '';
+    } else if (e.target.closest('.btn-increase')) {
+        state.recipe.updateServings('inc');
+    }
+
+    recipeView.renderRecipe(state.recipe);
 });
 
 
