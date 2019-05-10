@@ -3,6 +3,7 @@ import { elements, renderLoader, clearLoader } from './views/base';
 
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import Likes from './models/Likes';
 
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
@@ -19,6 +20,8 @@ const controlSearch = async () => {
     const query = elements.searchField.value;
 
     if (query) {
+
+        // Create new search object 
         state.search = new Search(query);
 
         // Clear input 
@@ -53,7 +56,7 @@ const controlSearch = async () => {
  */
 const controlRecipe = async id => {
 
-    // Create a new recipe
+    // Create a new recipe object 
     state.recipe = new Recipe(id);
 
     try {
@@ -92,20 +95,29 @@ elements.search.addEventListener('submit', e => {
 });
 
 elements.resultsPages.addEventListener('click', e => {
+    // Get page button 
     const button = e.target.closest('.btn-inline');
     if (button) {
+        // Clear results from current page
         searchView.clearResults();
+
+        // Get current page
         const page = parseInt(button.dataset.goto);
+        
+        // Render results
         searchView.renderResults(state.search.recipes, page);
     } 
 })
 
 elements.resultsList.addEventListener('click', e => {
+    // Get recipe DOM
     const recipe = e.target.closest('.results__link');
     
     if (recipe) {
+        // Highlight selected recipe 
         searchView.highlightResult(recipe);
 
+        // Get recipe id 
         const recipeID = recipe.href.substring(recipe.href.indexOf('#') + 1);
     
         controlRecipe(recipeID);
@@ -114,10 +126,24 @@ elements.resultsList.addEventListener('click', e => {
 
 elements.recipe.addEventListener('click', e => {
     if (e.target.closest('.btn-decrease')) {
+        // Decrease servings
         state.recipe.servings > 1 ? state.recipe.updateServings('dec') : '';
     } else if (e.target.closest('.btn-increase')) {
+        // Increase servings
         state.recipe.updateServings('inc');
+    } else if (e.target.closest('.recipe__love')) {
+        // Like or dislike recipe 
+        state.recipe.liked(); 
+        if (!state.likes) {
+            // Create new Likes object
+            state.likes = new Likes()
+        }
+
+        // Add or remove recipe in Likes 
+        state.likes.manage(state.recipe);
     }
+
+    recipeView.clearRecipe();
 
     recipeView.renderRecipe(state.recipe);
 });
