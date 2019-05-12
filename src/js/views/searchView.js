@@ -8,7 +8,7 @@ const renderRecipe = recipe => {
 
     recipe.title = recipe.title.length > 16 ? `${recipe.title.substring(0, 17)} ...`  : recipe.title;
 
-    let markup = `
+    const markup = `
         <li>
             <a class="results__link" href="#${recipe.recipe_id}">
                 <figure class="results__fig">
