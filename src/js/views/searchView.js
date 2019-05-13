@@ -1,13 +1,10 @@
-import { elements } from './base';
+import { elements, formatTitle } from './base';
 
 export const clearInput = () => {
     elements.searchField.value = '';
 };
 
 const renderRecipe = recipe => {
-
-    recipe.title = recipe.title.length > 16 ? `${recipe.title.substring(0, 17)} ...`  : recipe.title;
-
     const markup = `
         <li>
             <a class="results__link" href="#${recipe.recipe_id}">
@@ -15,7 +12,7 @@ const renderRecipe = recipe => {
                     <img src="${recipe.image_url}" alt="${recipe.title}">
                 </figure>
                 <div class="results__data">
-                    <h4 class="results__name">${recipe.title}</h4>
+                    <h4 class="results__name">${formatTitle(recipe.title)}</h4>
                     <p class="results__author">${recipe.publisher}</p>
                 </div>
             </a>

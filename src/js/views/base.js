@@ -5,7 +5,10 @@ export const elements = {
     resultsList: document.querySelector('.results__list'),
     resultsPages: document.querySelector('.results__pages'), 
     
-    recipe: document.querySelector('.recipe')
+    recipe: document.querySelector('.recipe'),
+
+    likesField: document.querySelector('.likes__field'),
+    likesList: document.querySelector('.likes__list')
 };
 
 export const renderLoader = (part) => {
@@ -26,4 +29,8 @@ export const renderLoader = (part) => {
 
 export const clearLoader = () => {
     document.querySelector('.loader').parentNode.removeChild(document.querySelector('.loader'));
+};
+
+export const formatTitle = title => {
+    return title.length > 16 ? `${title.substring(0, 17)} ...`  : title;
 };
