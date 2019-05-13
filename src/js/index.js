@@ -7,6 +7,7 @@ import Likes from './models/Likes';
 
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as likesView from './views/likesView';
 
 const state = {};
 
@@ -81,6 +82,9 @@ const controlRecipe = async id => {
         // Clear loader
         clearLoader();
 
+        // Test if recipe is liked
+        state.recipe.testIfLiked(state.likes.likes)
+
         // Render recipe
         recipeView.renderRecipe(state.recipe);
     } catch (error) {
@@ -112,15 +116,28 @@ elements.resultsPages.addEventListener('click', e => {
 elements.resultsList.addEventListener('click', e => {
     // Get recipe DOM
     const recipe = e.target.closest('.results__link');
-    
     if (recipe) {
-        // Highlight selected recipe 
-        searchView.highlightResult(recipe);
-
         // Get recipe id 
         const recipeID = recipe.href.substring(recipe.href.indexOf('#') + 1);
     
+        // Highlight selected recipe 
+        searchView.highlightResult(recipeID);
+
         controlRecipe(recipeID);
+    } 
+});
+
+elements.likesList.addEventListener('click', e => {
+    // Get like DOM
+    const like = e.target.closest('.likes__link');
+    if (like) {
+        // Get like id 
+        const likeID = like.href.substring(like.href.indexOf('#') + 1);
+    
+        // Highlight selected like 
+        searchView.highlightResult(likeID);
+
+        controlRecipe(likeID);
     } 
 });
 
@@ -134,18 +151,26 @@ elements.recipe.addEventListener('click', e => {
     } else if (e.target.closest('.recipe__love')) {
         // Like or dislike recipe 
         state.recipe.liked(); 
-        if (!state.likes) {
-            // Create new Likes object
-            state.likes = new Likes()
-        }
 
         // Add or remove recipe in Likes 
         state.likes.manage(state.recipe);
+
+        // Render likes 
+        likesView.renderLikes(state.likes);
     }
 
     recipeView.clearRecipe();
 
     recipeView.renderRecipe(state.recipe);
+});
+
+window.addEventListener('load', () => {
+    if (!state.likes) {
+        // Create new Likes object
+        state.likes = new Likes()
+    }
+
+    likesView.renderLikes(state.likes);
 });
 
 

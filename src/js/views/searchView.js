@@ -68,13 +68,18 @@ export const clearResults = () => {
     elements.resultsPages.innerHTML = '';
 };
 
-export const highlightResult = (recipe) => {
+export const highlightResult = id => {
     for (let curr of document.querySelectorAll('.results__link')) {
         if (curr.classList.contains('results__link--active')) {
             curr.classList.remove('results__link--active');
             break;
         }
     }
-    recipe.classList.add('results__link--active');
+
+    const recipeDOM = document.querySelector(`.results__link[href*="#${id}"]`);
+    if (recipeDOM) {
+        document.querySelector(`.results__link[href*="#${id}"]`).classList.add('results__link--active');
+    }
+    
 };
 
