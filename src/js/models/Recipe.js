@@ -109,4 +109,13 @@ export default class Recipe {
     liked() {
         this.isLiked ? this.isLiked = false : this.isLiked = true;
     }
+
+    testIfLiked(likes) {
+        for (const like of likes) {
+            if (like.id === this.id) {
+                this.isLiked = true;
+                break;
+            }
+        }
+    }
 }
