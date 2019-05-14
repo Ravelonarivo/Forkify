@@ -93,3 +93,15 @@ export const renderRecipe = (recipe) => {
 
 export const clearRecipe = () => elements.recipe.innerHTML = '';
 
+export const toggleLike = recipe => {
+    document.querySelector('.header__likes use').setAttribute('href', `img/icons.svg#icon-heart${recipe.isLiked ? '' : '-outlined'}`);
+}
+
+export const updateRecipeIngredients = recipe => {
+    document.querySelector('.recipe__info-data--people').innerHTML = recipe.servings;
+
+    document.querySelectorAll('.recipe__count').forEach((element, index) => {
+        element.innerHTML = recipe.ingredients[index].count;
+    });
+}
+
