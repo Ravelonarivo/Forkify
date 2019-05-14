@@ -10,5 +10,15 @@ export default class Likes {
             const recipeIndex = this.likes.findIndex(curr => curr === recipe);
             this.likes.splice(recipeIndex, 1);
         }
+        
+        this.persistData();
+    }
+
+    persistData() {
+        localStorage.setItem('likes',  JSON.stringify(this.likes));
+    }
+
+    readStorage() {
+        return JSON.parse(localStorage.getItem('likes'));
     }
 }

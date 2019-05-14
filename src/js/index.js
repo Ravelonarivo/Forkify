@@ -51,6 +51,26 @@ const controlSearch = async () => {
     }
 };
 
+elements.search.addEventListener('submit', e => {
+    e.preventDefault();
+    controlSearch();
+});
+
+elements.resultsPages.addEventListener('click', e => {
+    // Get page button 
+    const button = e.target.closest('.btn-inline');
+    if (button) {
+        // Clear results from current page
+        searchView.clearResults();
+
+        // Get current page
+        const page = parseInt(button.dataset.goto);
+        
+        // Render results
+        searchView.renderResults(state.search.recipes, page);
+    } 
+})
+
 
 /**
  * Recipe controler
@@ -92,27 +112,6 @@ const controlRecipe = async id => {
     }
 }  
 
-
-elements.search.addEventListener('submit', e => {
-    e.preventDefault();
-    controlSearch();
-});
-
-elements.resultsPages.addEventListener('click', e => {
-    // Get page button 
-    const button = e.target.closest('.btn-inline');
-    if (button) {
-        // Clear results from current page
-        searchView.clearResults();
-
-        // Get current page
-        const page = parseInt(button.dataset.goto);
-        
-        // Render results
-        searchView.renderResults(state.search.recipes, page);
-    } 
-})
-
 elements.resultsList.addEventListener('click', e => {
     // Get recipe DOM
     const recipe = e.target.closest('.results__link');
@@ -126,6 +125,33 @@ elements.resultsList.addEventListener('click', e => {
         controlRecipe(recipeID);
     } 
 });
+
+/**
+ * Likes controler
+ */
+const controlLikes = () => {
+  
+    // Create new Likes object
+    if (!state.likes) {
+        state.likes = new Likes();
+        
+        const data = state.likes.readStorage();
+        if (data && data.length > 0) {
+            state.likes.likes = data;
+        }
+    }
+        
+    if (state.recipe) {
+         // Like or dislike recipe 
+        state.recipe.liked(); 
+
+        // Add or remove recipe in Likes 
+        state.likes.manage(state.recipe);
+    }
+
+    // Render likes 
+    likesView.renderLikes(state.likes);
+}; 
 
 elements.likesList.addEventListener('click', e => {
     // Get like DOM
@@ -149,14 +175,7 @@ elements.recipe.addEventListener('click', e => {
         // Increase servings
         state.recipe.updateServings('inc');
     } else if (e.target.closest('.recipe__love')) {
-        // Like or dislike recipe 
-        state.recipe.liked(); 
-
-        // Add or remove recipe in Likes 
-        state.likes.manage(state.recipe);
-
-        // Render likes 
-        likesView.renderLikes(state.likes);
+        controlLikes();
     }
 
     recipeView.clearRecipe();
@@ -165,12 +184,12 @@ elements.recipe.addEventListener('click', e => {
 });
 
 window.addEventListener('load', () => {
-    if (!state.likes) {
-        // Create new Likes object
-        state.likes = new Likes()
-    }
+    controlLikes();
 
-    likesView.renderLikes(state.likes);
+    const recipeID = window.location.hash.replace('#', '');
+    if (recipeID) {
+        controlRecipe(recipeID);
+    }
 });
 
 
