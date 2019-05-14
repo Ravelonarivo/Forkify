@@ -75,121 +75,102 @@ elements.resultsPages.addEventListener('click', e => {
 /**
  * Recipe controler
  */
-const controlRecipe = async id => {
+const controlRecipe = async () => {
 
-    // Create a new recipe object 
-    state.recipe = new Recipe(id);
+    // Get recipe id
+    const id = window.location.hash.replace('#', '');
+    
+    if (id) {
+        // Create a new recipe object 
+        state.recipe = new Recipe(id);
 
-    try {
-        // Clear last recipe
-        recipeView.clearRecipe();
+        try {
+            // Clear last recipe
+            recipeView.clearRecipe();
 
-        // Render loader
-        renderLoader('recipe');
+            // Render loader
+            renderLoader('recipe');
 
-        // Get Details
-        await state.recipe.getDetails();
+            // Get Details
+            await state.recipe.getDetails();
 
-        // Calculate time 
-        state.recipe.calcTime();
+            // Calculate time 
+            state.recipe.calcTime();
 
-        // Calculate servings
-        state.recipe.calcServings();
+            // Calculate servings
+            state.recipe.calcServings();
 
-        // Parse ingredients
-        state.recipe.parseIngredients();
+            // Parse ingredients
+            state.recipe.parseIngredients();
 
-        // Clear loader
-        clearLoader();
+            // Clear loader
+            clearLoader();
 
-        // Test if recipe is liked
-        state.recipe.testIfLiked(state.likes.likes)
+            // Test if recipe is liked
+            state.recipe.testIfLiked(state.likes.likes)
 
-        // Render recipe
-        recipeView.renderRecipe(state.recipe);
-    } catch (error) {
-        alert(error);
+            // Highlight selected recipe 
+            searchView.highlightResult(id);
+
+            // Render recipe
+            recipeView.renderRecipe(state.recipe);
+        } catch (error) {
+            alert(error);
+        }
     }
 }  
 
-elements.resultsList.addEventListener('click', e => {
-    // Get recipe DOM
-    const recipe = e.target.closest('.results__link');
-    if (recipe) {
-        // Get recipe id 
-        const recipeID = recipe.href.substring(recipe.href.indexOf('#') + 1);
-    
-        // Highlight selected recipe 
-        searchView.highlightResult(recipeID);
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
-        controlRecipe(recipeID);
-    } 
-});
 
 /**
  * Likes controler
  */
-const controlLikes = () => {
+const controlLikes = buttonClicked => {
   
     // Create new Likes object
     if (!state.likes) {
         state.likes = new Likes();
         
+        // Get data from localStorage
         const data = state.likes.readStorage();
+        
         if (data && data.length > 0) {
             state.likes.likes = data;
         }
     }
         
-    if (state.recipe) {
+    if (state.recipe && buttonClicked) {
          // Like or dislike recipe 
         state.recipe.liked(); 
 
         // Add or remove recipe in Likes 
         state.likes.manage(state.recipe);
-    }
+
+        // Toggle like button
+        recipeView.toggleLike(state.recipe);
+    } 
 
     // Render likes 
     likesView.renderLikes(state.likes);
 }; 
 
-elements.likesList.addEventListener('click', e => {
-    // Get like DOM
-    const like = e.target.closest('.likes__link');
-    if (like) {
-        // Get like id 
-        const likeID = like.href.substring(like.href.indexOf('#') + 1);
-    
-        // Highlight selected like 
-        searchView.highlightResult(likeID);
-
-        controlRecipe(likeID);
-    } 
-});
-
 elements.recipe.addEventListener('click', e => {
     if (e.target.closest('.btn-decrease')) {
         // Decrease servings
         state.recipe.servings > 1 ? state.recipe.updateServings('dec') : '';
+        recipeView.updateRecipeIngredients(state.recipe);
     } else if (e.target.closest('.btn-increase')) {
         // Increase servings
         state.recipe.updateServings('inc');
+        recipeView.updateRecipeIngredients(state.recipe);
     } else if (e.target.closest('.recipe__love')) {
-        controlLikes();
-    }
-
-    recipeView.clearRecipe();
-
-    recipeView.renderRecipe(state.recipe);
+        controlLikes(true);
+    }   
 });
 
 window.addEventListener('load', () => {
-    controlLikes();
-
-    const recipeID = window.location.hash.replace('#', '');
-    if (recipeID) {
-        controlRecipe(recipeID);
-    }
+    controlLikes(false);
 });
 
 
