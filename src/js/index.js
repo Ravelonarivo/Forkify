@@ -4,10 +4,12 @@ import { elements, renderLoader, clearLoader } from './views/base';
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import Likes from './models/Likes';
+import List from './models/List';
 
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as likesView from './views/likesView';
+import * as listView from './views/listView';
 
 const state = {};
 
@@ -155,6 +157,54 @@ const controlLikes = buttonClicked => {
     likesView.renderLikes(state.likes);
 }; 
 
+window.addEventListener('load', () => {
+    controlLikes(false);
+});
+
+
+/**
+ * List controler  
+ */
+const controlList = () => {
+    if (!state.list) {
+        state.list = new List();
+    }
+
+    // Add ingredients into list 
+    state.recipe.ingredients.forEach(ingredient => {
+        state.list.addItem(ingredient);
+    });
+
+    // Clear previous list 
+    listView.clearList();
+
+    // Render List 
+    state.list.items.forEach(item => {
+       listView.renderList(item);
+    });
+}
+
+elements.shoppingList.addEventListener('change', e => {
+    const itemId  = e.target.closest('.shopping__item').dataset.itemid;
+    const itemCount = parseFloat(e.target.closest('.shopping__count input').value, 10);
+    
+    // Updata list item count
+    state.list.updateCount(itemId, itemCount);
+});
+
+elements.shoppingList.addEventListener('click', e => {
+    const itemId  = e.target.closest('.shopping__item').dataset.itemid;
+    if (e.target.closest('.shopping__delete')) {
+        // Delete item from list view
+        listView.deleteItem(itemId);
+
+        // Delete item from list object
+        state.list.deleteItem(itemId);
+    }  
+});
+
+
+// Manage button click on recipe view
 elements.recipe.addEventListener('click', e => {
     if (e.target.closest('.btn-decrease')) {
         // Decrease servings
@@ -166,11 +216,9 @@ elements.recipe.addEventListener('click', e => {
         recipeView.updateRecipeIngredients(state.recipe);
     } else if (e.target.closest('.recipe__love')) {
         controlLikes(true);
-    }   
-});
-
-window.addEventListener('load', () => {
-    controlLikes(false);
+    } else if (e.target.closest('.recipe__btn--add')) {
+        controlList();
+    }
 });
 
 
