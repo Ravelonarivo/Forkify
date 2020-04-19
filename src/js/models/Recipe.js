@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {key, proxy} from '../config';
 
 export default class Recipe {
     
@@ -10,7 +9,7 @@ export default class Recipe {
 
     async getDetails() {
         try {
-            const result = await axios(`${proxy}https://www.food2fork.com/api/get?key=${key}&rId=${this.id}`);
+            const result = await axios(`https://forkify-api.herokuapp.com/api/get?rId=${this.id}`);
             const recipe = result.data.recipe;
 
             this.imageUrl = recipe.image_url;
